@@ -2,7 +2,7 @@
 
 	get command returns push
 	set command returns push to confirm new value 
-	push command to notch is not a valid cmd, its only pushed back by Mini Streamer to return/confirm set value.
+	push command to notch is not a valid cmd, its only pushed back to return/confirm set value.
 
 	UART/CDC is running at 115200kbps, no parity, 1 stop bit. 
             
@@ -45,153 +45,55 @@ decade:
 
 decade in range from 0 (330pF) to 3 (333.33nF), integer
 	
-#### ADC CALIBRATION
+#### SET RESISTOR LADDER
+
+If manual resistor set is requied can be set by this API call. 
 
 ```shell
-[getADCcal]{port:1,type:0} - reads back calibration value with:
-```
-```shell
-[pushADCcal]{adcCal:+-xxxxxxx}
-```
-
-```shell
-[setADCcal]{port:1,type:0} - calibrates port
+[getResistors]{}
 ```
 
 ```shell
-[pushADCcal]{confirmCalibrationStart}
+[setResistors]{value:63}
 ```
 
 ```shell
-[replyADCcal]{y} OR [replyADCcal]{n}
+[pushResistors]{value:63}
 ```
-port:
 
-	0   "USB1",	
-	1   "USB2",	
-  	2   "USB3",	
-type:
+value:
 
-	0   "OFFSET",	
-	1   "RDSON",	only valid for USB2 and 3
+ladder value, in range from 0 (160k) to 63 (1.25k), 6bit integer. 
 
-Calibration will timeout after 5s without reply
-PWR is self calibrated
+#### SET DAC ARRAY
 
-#### ADC CALIBRATION - recall factory cal defaults
+If manual multibit trim DAC set is requied can be set by this API call. 
 
 ```shell
-[getADCdefaults]{port:1} - reads out factory defaults
+[getDACs]{}
 ```
 
 ```shell
-[setADCdefaults]{port:1} - sets back factory defaults for specific port
+[setDACs]{value:4526}
 ```
 
 ```shell
-[pushADCdefaults]{offset:xxxx,senseR:80} 
-``` 
-
-RDSon is sent back only for USB 2 and 3
-
-
-#### ADC CALIBRATION - set factory cal defaults 
-##### DONT USE, FOR PRODUCTION PURPOSES ONLY!!!
-
-```shell
-[setADCfactory]{I know what I'm doing}
+[pushDACs]{value:4156}
 ```
 
-```shell
-[pushADCfactory]{confirmCalibrationDefaults}
-```
+value:
+DAC value, 16bit integer. 
 
-```shell
-[replyADCfactory]{y} OR [replyADCfactory]{n}
-```
-
-Calling setADCfactory will load current calibration profile for all ports into internal memory as factory defaults.
-
-#### POWER/UNIT STATUS
-
-```shell
-[getPowerStatus]{}
-```
-
-```shell
-[pushPowerStatus]{status:0}
-```
-
-status:
-
-	0   Everything is OK,	
-	1   Input voltage too low, audio performance could be degraded, connect 18V power supply
-  	2   Unit failure, input regulator could be damaged
-  	
-	
-#### Mini Streamer HW BOOT CONTROL
-
-```shell
-[pushBoot]{boot:0}
-```
-
-```shell
-[setBoot]{boot:0}
-```
-
-boot:
-
-	0   note defined,	
-	1   puts CM3 into USB bootloader mode where new Streamer Software image can be uploaded over USB	
-	
-Bootloader mode has to be switched off by user presing "USB" toggle button on the unit front panel
-
-	
-#### POWER OFF CONTROL
-
-Is pushed from the Mini Streamer HW to Streamer Software to signal that user has switched off the unit with hardware front panel toggle. Streamer Software then needs to start shutting down. After its ready to cut the power off, it sets GPIO34 low and power is going to be cut 3 seconds later.
-
-If GPIO34 is not put low within 60 seconds, the unit will be shut anyway. If GPIO34 is low when shutdown is commanded (shall go high when Streamer Software has booted up), unit is shut down immediately. 
-
-```shell
-[getTurnOff]{}
-```
-
-```shell
-[setTurnOff]{cmd:0}
-```
-
-```shell
-[pushTurnOff]{cmd:0}
-```
-cmd:
-
-	0 - not valid
-	1 - unit is shutting down (either set from Streamer Software, or pushed from the Mini Streamer HW)
-
-#### Mini Streamer HW VERSION
+#### FW VERSION
 
 ```shell
 [getBoardVersion]{}
 ```
 
 ```shell
-[pushBoardVersion]{boardRev:12,firmwareRev:11}
+[pushBoardVersion]{firmwareRev:11}
 ```
 
-#### STREAMER VERSION
-
-```shell
-[getStreamerVersion]{}
-```
-
-```shell
-[pushStreamerVersion]{version:1223}
-```
-
-```shell
-[setStreamerVersion]{version:1223}
-```
 #### TODO:
 
 Define UART bootloader for onboard firmware upgrade
