@@ -1,10 +1,10 @@
 # Control API of a programmable notch filter for THD measurement
 
-get command returns push
-set command returns push to confirm new value 
-push command to notch is not a valid cmd, its only pushed back by Mini Streamer to return/confirm set value.
+	get command returns push
+	set command returns push to confirm new value 
+	push command to notch is not a valid cmd, its only pushed back by Mini Streamer to return/confirm set value.
 
-UART/CDC is running at 115200kbps, no parity, 1 stop bit. 
+	UART/CDC is running at 115200kbps, no parity, 1 stop bit. 
             
 #### SET NOTCH FREQUENCY
 
